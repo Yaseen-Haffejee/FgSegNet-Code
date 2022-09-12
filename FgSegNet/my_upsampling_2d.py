@@ -5,7 +5,7 @@ Created on Mon Aug  6 15:20:23 2018
 
 @author: longang
 """
-
+import keras
 from keras import backend as K
 from keras.engine.topology import Layer
 from keras.utils import conv_utils

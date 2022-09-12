@@ -5,9 +5,8 @@ Created on Mon Sep 29 22:22:22 2017
 
 @author: longang
 """
-
-get_ipython().magic(u'load_ext autoreload')
-get_ipython().magic(u'autoreload 2')
+# get_ipython().magic(u'load_ext autoreload')
+# get_ipython().magic(u'autoreload 2')
 
 import numpy as np
 import tensorflow as tf
@@ -57,6 +56,7 @@ def generateData(train_dir, dataset_dir, scene, method_name):
     # given ground-truths, load inputs  
     Y_list = glob.glob(os.path.join(train_dir, '*.png'))
     X_list= glob.glob(os.path.join(dataset_dir, 'input','*.jpg'))
+
 
 
     if len(Y_list)<=0 or len(X_list)<=0:
@@ -247,7 +247,9 @@ for category, scene_list in dataset.items():
         
         # training frame path and dataset2014 path
         train_dir = os.path.join('..', 'FgSegNet_dataset2014', category, scene + str(num_frames))
-        dataset_dir = os.path.join('..', 'CDnet2014_dataset', category, scene)
+        #train_dir = os.path.join('..', 'CDnet2014_dataset/dataset', category, scene)
+        dataset_dir = os.path.join('..', 'CDnet2014_dataset/dataset', category, scene)
+        print(dataset_dir)
         results = generateData(train_dir, dataset_dir, scene, method_name)
         
         mdl_path = os.path.join(mdl_dir, 'mdl_' + scene + '.h5')
