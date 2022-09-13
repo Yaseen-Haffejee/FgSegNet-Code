@@ -12,6 +12,7 @@ import numpy as np
 import tensorflow as tf
 import random as rn
 import os, sys
+import time 
 
 # set current working directory
 cur_dir = os.getcwd()
@@ -56,8 +57,6 @@ def generateData(train_dir, dataset_dir, scene, method_name):
     # given ground-truths, load inputs  
     Y_list = glob.glob(os.path.join(train_dir, '*.png'))
     X_list= glob.glob(os.path.join(dataset_dir, 'input','*.jpg'))
-
-
 
     if len(Y_list)<=0 or len(X_list)<=0:
         raise ValueError('System cannot find the dataset path or ground-truth path. Please give the correct path.')
@@ -200,8 +199,10 @@ dataset = {
 
 # =============================================================================
 
-method_name = 'FgSegNet_M' # either <FgSegNet_M> or <FgSegNet_S>, default FgSegNet_M
-
+method_name = 'FgSegNet_S' # either <FgSegNet_M> or <FgSegNet_S>, default FgSegNet_M
+# Create a text file to write in the results of the time of execution
+f = open("results.txt", "a")
+f.write(f"--------------------Using the {method_name} model.-------------------- \n")
 num_frames = 50 # either 50 or 200 frames, default 50 frames
 
 reduce_factor = 0.1
@@ -211,6 +212,16 @@ reg=5e-4
 max_epochs = 60 if num_frames==50 else 50 # 50f->60epochs, 200f->50epochs
 val_split = 0.2
 batch_size = 1
+
+f.write("The hyperparametrs being use are: \n")
+f.write(f"The reduce factors: {reduce_factor} \n")
+f.write(f"The patience value: {num_patience} \n")
+f.write(f"The learning rate: {lr} \n")
+f.write(f"The regularisation: {reg} \n")
+f.write(f"The number of epochs: {max_epochs} \n")
+f.write(f"The batch size: {batch_size} \n")
+
+f.write("Timing begins \n")
 # =============================================================================
 
 # Example: (free to modify)
@@ -223,6 +234,8 @@ batch_size = 1
 # FgSegNet/FgSegNet_dataset2014/...
 # FgSegNet/CDnet2014_dataset/...
 
+## Begin timing the process from here
+time_begin = time.time()
 
 assert num_frames in [50,200], 'Incorrect number of frames'
 main_dir = os.path.join('..', method_name)
@@ -237,21 +250,27 @@ if not os.path.exists(vgg_weights_path):
 
 print('*** Current method >>> ' + method_name + '\n')
 for category, scene_list in dataset.items():
-    
     mdl_dir = os.path.join(main_mdl_dir, category)
     if not os.path.exists(mdl_dir):
         os.makedirs(mdl_dir)
         
     for scene in scene_list:
+        time_for_loop = 0.0
+
         print ('Training ->>> ' + category + ' / ' + scene)
         
         # training frame path and dataset2014 path
         train_dir = os.path.join('..', 'FgSegNet_dataset2014', category, scene + str(num_frames))
-        #train_dir = os.path.join('..', 'CDnet2014_dataset/dataset', category, scene)
-        dataset_dir = os.path.join('..', 'CDnet2014_dataset/dataset', category, scene)
-        print(dataset_dir)
+        dataset_dir = os.path.join('..', 'CDnet2014_dataset', category, scene)
         results = generateData(train_dir, dataset_dir, scene, method_name)
         
         mdl_path = os.path.join(mdl_dir, 'mdl_' + scene + '.h5')
         train(results, scene, mdl_path, vgg_weights_path, method_name)
+        time_for_loop = (time.time() - time_begin)
+        f.write(f"The time taken to train the folder {category}/{scene}: {time_for_loop/60} minutes.")
+
         del results
+
+time_end = time.time()
+f.write(f"The total training time is: {(time_end - time_begin)/60} minutes.")
+f.close()

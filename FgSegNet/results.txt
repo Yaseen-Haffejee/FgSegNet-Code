@@ -1,0 +1,10 @@
+--------------------Using the FgSegNet_S model.-------------------- 
+The hyperparametrs being use are: 
+The reduce factors: 0.1 
+The patience value: 6 
+The learning rate: 0.0001 
+The regularisation: 0.0005 
+The number of epochs: 60 
+The batch size: 1 
+Timing begins 
+The time taken to train the folder baseline/highway: 11.802952166398367 minutes.The time taken to train the folder baseline/pedestrians: 24.937991408507028 minutes.The time taken to train the folder baseline/office: 38.04345412254334 minutes.The time taken to train the folder baseline/PETS2006: 92.08836193482081 minutes.
