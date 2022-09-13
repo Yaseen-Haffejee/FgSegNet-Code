@@ -234,8 +234,7 @@ f.write("Timing begins \n")
 # FgSegNet/FgSegNet_dataset2014/...
 # FgSegNet/CDnet2014_dataset/...
 
-## Begin timing the process from here
-time_begin = time.time()
+
 
 assert num_frames in [50,200], 'Incorrect number of frames'
 main_dir = os.path.join('..', method_name)
@@ -249,6 +248,8 @@ if not os.path.exists(vgg_weights_path):
                                 file_hash='6d6bbae143d832006294945121d1f1fc')
 
 print('*** Current method >>> ' + method_name + '\n')
+## Begin timing the process from here
+time_begin = time.time()
 for category, scene_list in dataset.items():
     mdl_dir = os.path.join(main_mdl_dir, category)
     if not os.path.exists(mdl_dir):
@@ -267,7 +268,7 @@ for category, scene_list in dataset.items():
         mdl_path = os.path.join(mdl_dir, 'mdl_' + scene + '.h5')
         train(results, scene, mdl_path, vgg_weights_path, method_name)
         time_for_loop = (time.time() - time_begin)
-        f.write(f"The time taken to train the folder {category}/{scene}: {time_for_loop/60} minutes.")
+        f.write(f"The time taken to train the folder {category}/{scene}: {time_for_loop/60} minutes.\n")
 
         del results
 
